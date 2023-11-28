@@ -60,7 +60,7 @@ def run():
         raise ValueError('Invalid index')
 
     tot_timesteps = 10e6
-    n_cpu = 12
+    n_cpu = 4
 
     env_eval = gym.make(variant['env_name'], generate_map=generate_map)
     check_env(env_eval)
@@ -77,6 +77,7 @@ def run():
     model = Algorithm("MultiInputPolicy",
                 vec_env, gamma=0.98,
                 learning_starts=50_000,
+                buffer_size=50_000,
                 target_update_interval=10_000,
                 exploration_fraction=0.2,
                 gradient_steps=-1,
