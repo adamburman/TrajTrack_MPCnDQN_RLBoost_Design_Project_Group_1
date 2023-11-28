@@ -7,16 +7,18 @@ example agent to train and evaluate by setting the ``index`` varaible
 """
 
 import random
+import numpy as np
 import copy
 
 import gym
 from torch import no_grad
 
-from stable_baselines3 import DQN
+from stable_baselines3 import DDPG
 from stable_baselines3.common.vec_env import SubprocVecEnv
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.callbacks import EvalCallback
 from stable_baselines3.common.env_checker import check_env
+from stable_baselines3.common.noise import NormalActionNoise, OrnsteinUhlenbeckActionNoise
 
 from pkg_dqn.utils.plotresults import plot_training_results
 from pkg_dqn.utils.map import generate_map_dynamic, generate_map_corridor, generate_map_mpc
@@ -68,23 +70,23 @@ def run():
     vec_env      = make_vec_env(variant['env_name'], n_envs=n_cpu, seed=0, vec_env_cls=SubprocVecEnv, env_kwargs={'generate_map': generate_map})
     vec_env_eval = make_vec_env(variant['env_name'], n_envs=n_cpu, seed=0, vec_env_cls=SubprocVecEnv, env_kwargs={'generate_map': generate_map_mpc(11)})
     
+    n_actions  = vec_env.action_space.shape[-1]
+    action_noise = OrnsteinUhlenbeckActionNoise(mean=np.zeros(n_actions), sigma=0.1 * np.ones(n_actions))
 
-    Algorithm = PerDQN if variant['per'] else DQN
+    Algorithm = PerDQN if variant['per'] else DDPG
     eval_callback = EvalCallback(vec_env_eval,
                                  best_model_save_path=path,
                                  log_path=path,
                                  eval_freq=max((tot_timesteps / 1000) // n_cpu, 1))
     model = Algorithm("MultiInputPolicy",
-                vec_env, gamma=0.98,
-                learning_starts=50_000,
-                buffer_size=50_000,
-                target_update_interval=10_000,
-                exploration_fraction=0.2,
-                gradient_steps=-1,
-                device=variant['device'],
-                verbose=1,
-                policy_kwargs={'net_arch': variant['net_arch']},
-                learning_rate=0.0001,)
+                    vec_env, learning_rate=0.0001, 
+                    learning_starts=tot_timesteps/10, gamma=0.98,
+                    gradient_steps=-1,
+                    action_noise = action_noise,
+                    policy_kwargs={'net_arch': variant['net_arch']},
+                    verbose=1,
+                    device=variant['device'],
+                )
 
     # Train the model
     if TO_TRAIN:

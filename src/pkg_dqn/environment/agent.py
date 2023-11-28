@@ -99,7 +99,7 @@ class MobileRobot:
             ref_speed = self.cfg.SPEED_MAX
         self.position += time_step * ref_speed  * np.asarray((np.cos(self.angle), np.sin(self.angle)))
 
-    def step(self, action_index: int, time_step: float) -> None:
+    def step(self, action, time_step: float) -> None:
         """
         Ref:
             Check environment for action space definition.
@@ -121,15 +121,11 @@ class MobileRobot:
             E.g. Action 1 is keep the angular velocity and accerlate foreward.
         """
 
-        if action_index // 3 == 0: # 0~2
-            self.speed += time_step * self.cfg.ACCELERATION_MAX
-        if action_index // 3 == 2:
-            self.speed += time_step * self.cfg.ACCELERATION_MIN
+        self.acceleration = action[0]
+        self.angular_acceleration = 3*action[1]
 
-        if action_index % 3 == 0:
-            self.angular_velocity += time_step * self.cfg.ANGULAR_ACCELERATION_MAX
-        if action_index % 3 == 2:
-            self.angular_velocity += time_step * self.cfg.ANGULAR_ACCELERATION_MIN
+        self.speed += time_step*self.acceleration
+        self.angular_velocity += time_step*self.angular_acceleration
 
         if self.speed > self.cfg.SPEED_MAX:
            self.speed = self.cfg.SPEED_MAX
