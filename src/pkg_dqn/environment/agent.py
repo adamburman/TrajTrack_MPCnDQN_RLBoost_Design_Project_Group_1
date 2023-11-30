@@ -120,12 +120,23 @@ class MobileRobot:
                 8: `⇘` ag right + li back
             E.g. Action 1 is keep the angular velocity and accerlate foreward.
         """
+        if isinstance(action, int):
+            if action // 3 == 0:
+                self.speed += time_step * self.cfg.ACCELERATION_MAX
+            if action // 3 == 2:
+                self.speed += time_step * self.cfg.ACCELERATION_MIN
 
-        self.acceleration = action[0]
-        self.angular_acceleration = 3*action[1]
+            if action % 3 == 0:
+                self.angular_velocity += time_step * self.cfg.ANGULAR_ACCELERATION_MAX
+            if action % 3 == 2:
+                self.angular_velocity += time_step * self.cfg.ANGULAR_ACCELERATION_MIN
 
-        self.speed += time_step*self.acceleration
-        self.angular_velocity += time_step*self.angular_acceleration
+        else:
+            self.acceleration = action[0]
+            self.angular_acceleration = 3*action[1]
+
+            self.speed += time_step*self.acceleration
+            self.angular_velocity += time_step*self.angular_acceleration
 
         if self.speed > self.cfg.SPEED_MAX:
            self.speed = self.cfg.SPEED_MAX

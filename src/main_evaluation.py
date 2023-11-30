@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 ### DRL import
 import gym
 from torch import no_grad
-from stable_baselines3 import DQN
+from stable_baselines3 import DDPG
 from stable_baselines3.common import env_checker
 
 from pkg_dqn.environment import MobileRobot
@@ -39,7 +39,7 @@ def ref_traj_filter(original: np.ndarray, new: np.ndarray, decay=1):
             decay = 0.0
     return filtered
 
-def load_rl_model_env(generate_map, index: int) -> Tuple[DQN, TrajectoryPlannerEnvironment]:
+def load_rl_model_env(generate_map, index: int) -> Tuple[DDPG, TrajectoryPlannerEnvironment]:
     variant = [
         {
             'env_name': 'TrajectoryPlannerEnvironmentImgsReward1-v0',
@@ -65,7 +65,7 @@ def load_rl_model_env(generate_map, index: int) -> Tuple[DQN, TrajectoryPlannerE
     
     env_eval:TrajectoryPlannerEnvironment = gym.make(variant['env_name'], generate_map=generate_map)
     env_checker.check_env(env_eval)
-    model = DQN.load(model_path)
+    model = DDPG.load(model_path)
     return model, env_eval
 
 def load_mpc(config_path: str, verbose: bool = True):
@@ -259,7 +259,7 @@ def main_process(rl_index:int=1, decision_mode:int=1, to_plot=False, scene_optio
         print()
     return time_list, info["success"], action_list, traj_gen.ref_traj, env_eval.traversed_positions, geo_map.obstacle_list
 
-def main_evaluate(rl_index: int, decision_mode: int, metrics: Metrics, scene_option:Tuple[int, int, int]) -> Metrics:
+def main_evaluate(rl_index: int, decision_mode, metrics: Metrics, scene_option:Tuple[int, int, int]) -> Metrics:
     to_plot = False
     time_list, success, actions, ref_traj, actual_traj, obstacle_list = main_process(rl_index=rl_index, decision_mode=decision_mode, to_plot=to_plot, scene_option=scene_option)
     metrics.add_trial_result(computation_time_list=time_list, succeed=success, action_list=actions, 
@@ -290,8 +290,8 @@ if __name__ == '__main__':
         - (1-right, 2-sharp, 3-u-shape)
     """
     rl_index = 1
-    num_trials = 50
-    scene_option = (2, 1, 3)
+    num_trials = 5
+    scene_option = (1, 3, 2)
 
     mpc_metrics = Metrics(mode='mpc')
     dqn_lid_metrics = Metrics(mode='dqn')
