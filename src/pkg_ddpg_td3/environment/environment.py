@@ -85,7 +85,7 @@ class TrajectoryPlannerEnvironment(gym.Env):
         # Action space is always the same. Linear acceleration has three
         # possibilities, accelerate-cruise-deccelerate, and angular
         # acceleration also has three possibilities left-middle-right
-        self.action_space = spaces.Discrete(3*3)
+        self.action_space = spaces.Box(low=np.array([-1, -1], dtype=np.float32), high=np.array([1, 1], dtype=np.float32), dtype=np.float32)
 
     def update_termination(self) -> bool:
         return bool(self.collided or self.reached_goal)
