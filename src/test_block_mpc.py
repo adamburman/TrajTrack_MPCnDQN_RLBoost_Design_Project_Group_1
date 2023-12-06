@@ -19,7 +19,7 @@ from visualizer.mpc_plot import MpcPlotAfter
 # CONFIG_FN = 'mpc_default.yaml'
 CONFIG_FN = 'mpc_longiter.yaml'
 
-INIT_BUILD = True
+INIT_BUILD = False
 PLOT_INLOOP = True
 show_animation = False
 save_animation = False

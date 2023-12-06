@@ -27,7 +27,7 @@ class Component:
     def reset(self) -> None:
         pass
 
-    def step(self, action) -> float:
+    def step(self, action: int) -> float:
         reward = 0
         return reward
 

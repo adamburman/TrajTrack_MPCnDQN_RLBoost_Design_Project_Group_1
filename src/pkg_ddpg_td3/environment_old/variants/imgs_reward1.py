@@ -11,7 +11,7 @@ class TrajectoryPlannerEnvironmentImgsReward1(TrajectoryPlannerEnvironment):
     def __init__(
         self,
         generate_map: MapGenerator,
-        time_step: float = 0.1,
+        time_step: float = 0.2,
         reference_path_sample_offset: float = 0,
         corner_samples: int = 3,
         image_width: int = 54,
@@ -26,12 +26,7 @@ class TrajectoryPlannerEnvironmentImgsReward1(TrajectoryPlannerEnvironment):
         reach_goal_reward_factor: float = 3,
         cross_track_reward_factor: float = 0.05,
         reference_speed: float = MobileRobot().cfg.SPEED_MAX * 0.8,
-        path_progress_factor: float = 2,
-        acceleration_factor: float = 0,
-        angular_acceleration_factor: float = 0,
-        jerk_factor: float = 0.02,
-        angular_jerk_factor: float = 0.02,
-
+        path_progress_factor: float = 2
     ):
         super().__init__(
             [
@@ -39,16 +34,15 @@ class TrajectoryPlannerEnvironmentImgsReward1(TrajectoryPlannerEnvironment):
                 AngularVelocityObservation(),
                 ReferencePathSampleObservation(1, 0, reference_path_sample_offset),
                 ReferencePathCornerObservation(corner_samples),
+
                 ImageObservation(image_width, image_height, image_scale_x, image_scale_y, image_down_sample, image_center_x, image_center_y, image_angle),
+                
                 CollisionReward(collision_reward_factor),
-                ReachGoalReward(reach_goal_reward_factor),
                 CrossTrackReward(cross_track_reward_factor),
-                ExcessiveSpeedReward(2*path_progress_factor, reference_speed),
+
+                ReachGoalReward(reach_goal_reward_factor),
+                ExcessiveSpeedReward(2 * path_progress_factor, reference_speed),
                 PathProgressReward(path_progress_factor),
-                AccelerationReward(acceleration_factor),
-                AngularAccelerationReward(angular_acceleration_factor),
-                JerkReward(jerk_factor),
-                AngularJerkReward(angular_jerk_factor),
             ],
             generate_map,
             time_step

@@ -21,11 +21,6 @@ from .ext_obsv_image import ImageObservation
 from .ext_obsv_sector import SectorObservation
 from .ext_obsv_sector_and_ray import SectorAndRayObservation
 
-from .acceleration_reward import AccelerationReward
-from .angular_acceleration_reward import AngularAccelerationReward
-from .jerk_reward import JerkReward
-from .angular_jerk_reward import AngularJerkReward
-
 __all__ = [
     'Component',
     'AngularVelocityObservation',
@@ -46,8 +41,4 @@ __all__ = [
     'SpeedReward',
     'PathProgressReward',
     'ExcessiveSpeedReward',
-    'AccelerationReward',
-    'AngularAccelerationReward',
-    'JerkReward',
-    'AngularJerkReward'
 ]
