@@ -63,12 +63,12 @@ def load_rl_model_env(generate_map, index: int) -> Tuple[PerDDPG, TD3, Trajector
         model_folder_name = 'ray'
     else:
         raise ValueError('Invalid index')
-    model_path_ddpg = os.path.join(pathlib.Path(__file__).resolve().parents[1], 'Model/DDPG', model_folder_name, 'best_model')
+    model_path_ddpg = os.path.join(pathlib.Path(__file__).resolve().parents[1], 'Model/td3', model_folder_name, 'best_model')
     model_path_td3 = os.path.join(pathlib.Path(__file__).resolve().parents[1], 'Model/td3', model_folder_name, 'best_model')
     
     env_eval:TrajectoryPlannerEnvironment = gym.make(variant['env_name'], generate_map=generate_map)
     env_checker.check_env(env_eval)
-    ddpg_model = PerDDPG.load(model_path_ddpg)
+    ddpg_model = DDPG.load(model_path_ddpg)
     td3_model = TD3.load(model_path_td3)
     return ddpg_model, td3_model, env_eval
 
@@ -296,12 +296,12 @@ if __name__ == '__main__':
     for i in range(num_trials):
         print(f"Trial {i+1}/{num_trials}")
         #mpc_metrics = main_evaluate(rl_index=1, decision_mode=1, metrics=mpc_metrics, scene_option=scene_option)
-        ddpg_lid_metrics = main_evaluate(rl_index=1, decision_mode=0, metrics=ddpg_lid_metrics, scene_option=scene_option)
-        ddpg_img_metrics = main_evaluate(rl_index=0, decision_mode=0, metrics=ddpg_img_metrics, scene_option=scene_option)
+        #ddpg_lid_metrics = main_evaluate(rl_index=1, decision_mode=0, metrics=ddpg_lid_metrics, scene_option=scene_option)
+        #ddpg_img_metrics = main_evaluate(rl_index=0, decision_mode=0, metrics=ddpg_img_metrics, scene_option=scene_option)
         td3_lid_metrics = main_evaluate(rl_index=1, decision_mode=1, metrics=td3_lid_metrics, scene_option=scene_option)
         td3_img_metrics = main_evaluate(rl_index=0, decision_mode=1, metrics=td3_img_metrics, scene_option=scene_option)
-        hyb_lid_metrics = main_evaluate(rl_index=1, decision_mode=2, metrics=hyb_lid_metrics, scene_option=scene_option)
-        hyb_img_metrics = main_evaluate(rl_index=0, decision_mode=2, metrics=hyb_img_metrics, scene_option=scene_option)
+        #hyb_lid_metrics = main_evaluate(rl_index=1, decision_mode=2, metrics=hyb_lid_metrics, scene_option=scene_option)
+        #hyb_img_metrics = main_evaluate(rl_index=0, decision_mode=2, metrics=hyb_img_metrics, scene_option=scene_option)
 
     round_digits = 2
     print(f"=== Scene {scene_option[0]}-{scene_option[1]}-{scene_option[2]} ===")
