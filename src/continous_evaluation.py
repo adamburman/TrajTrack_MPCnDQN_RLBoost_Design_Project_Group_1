@@ -68,8 +68,8 @@ def load_rl_model_env(generate_map, index: int) -> Tuple[PerDDPG, TD3, Trajector
     
     env_eval:TrajectoryPlannerEnvironment = gym.make(variant['env_name'], generate_map=generate_map)
     env_checker.check_env(env_eval)
-    ddpg_model = PerDDPG.load(model_path_ddpg)
     td3_model = TD3.load(model_path_td3)
+    ddpg_model = PerDDPG.load(model_path_ddpg)
     return ddpg_model, td3_model, env_eval
 
 def load_mpc(config_path: str, verbose: bool = True):
@@ -296,8 +296,8 @@ if __name__ == '__main__':
     for i in range(num_trials):
         print(f"Trial {i+1}/{num_trials}")
         #mpc_metrics = main_evaluate(rl_index=1, decision_mode=1, metrics=mpc_metrics, scene_option=scene_option)
-        ddpg_lid_metrics = main_evaluate(rl_index=1, decision_mode=0, metrics=ddpg_lid_metrics, scene_option=scene_option)
-        ddpg_img_metrics = main_evaluate(rl_index=0, decision_mode=0, metrics=ddpg_img_metrics, scene_option=scene_option)
+        #ddpg_lid_metrics = main_evaluate(rl_index=1, decision_mode=0, metrics=ddpg_lid_metrics, scene_option=scene_option)
+        #ddpg_img_metrics = main_evaluate(rl_index=0, decision_mode=0, metrics=ddpg_img_metrics, scene_option=scene_option)
         td3_lid_metrics = main_evaluate(rl_index=1, decision_mode=1, metrics=td3_lid_metrics, scene_option=scene_option)
         td3_img_metrics = main_evaluate(rl_index=0, decision_mode=1, metrics=td3_img_metrics, scene_option=scene_option)
         hyb_lid_metrics = main_evaluate(rl_index=1, decision_mode=2, metrics=hyb_lid_metrics, scene_option=scene_option)
@@ -310,20 +310,20 @@ if __name__ == '__main__':
     print('DDPG Lidar')
     print(ddpg_lid_metrics.get_average(round_digits))
     print()
-    print('DDPG Image')
-    print(ddpg_img_metrics.get_average(round_digits))
+    #print('DDPG Image')
+    #print(ddpg_img_metrics.get_average(round_digits))
     print()
     print('td3 Lidar')
     print(td3_lid_metrics.get_average(round_digits))
     print()
-    print('td3 Image')
-    print(td3_img_metrics.get_average(round_digits))
+    #print('td3 Image')
+    #print(td3_img_metrics.get_average(round_digits))
     print()
     print('DDPG hybrid Lidar')
     print(hyb_lid_metrics.get_average(round_digits))
     print()
-    print('DDPG hybrid Image')
-    print(hyb_img_metrics.get_average(round_digits))
+    #print('DDPG hybrid Image')
+    #print(hyb_img_metrics.get_average(round_digits))
     print('='*50)
 
 
