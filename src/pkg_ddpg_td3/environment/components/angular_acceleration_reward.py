@@ -8,5 +8,5 @@ class AngularAccelerationReward(Component):
     def __init__(self, factor: float):
         self.factor = factor
     
-    def step(self) -> float:
+    def step(self,action) -> float:
         return -self.factor*self.env.agent.angular_acceleration**2

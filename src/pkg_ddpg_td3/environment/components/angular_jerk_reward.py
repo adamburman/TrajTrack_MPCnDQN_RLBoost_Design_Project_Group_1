@@ -11,7 +11,7 @@ class AngularJerkReward(Component):
     def reset(self) -> None:
         self.last_angular_acceleration = 0
     
-    def step(self) -> float:
+    def step(self,action) -> float:
         reward = -self.factor*(self.env.agent.angular_acceleration - self.last_angular_acceleration)**2
         self.last_path_progress = self.env.agent.angular_acceleration
         return reward

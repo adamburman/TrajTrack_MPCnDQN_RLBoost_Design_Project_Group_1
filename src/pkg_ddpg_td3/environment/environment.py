@@ -211,7 +211,6 @@ class TrajectoryPlannerEnvironment(gym.Env):
         self.update_status()
 
         observation = self.get_observation()
-        print(action)
         reward = float(sum(c.step(action) for c in self.components))
         terminated = self.update_termination()
         info = self.get_info()
