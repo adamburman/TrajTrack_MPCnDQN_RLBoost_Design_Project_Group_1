@@ -108,30 +108,11 @@ class MobileRobot:
 
         Action space
         ------------
-            There are 9 combinations of angular (ag) and linear (li) accelerations:
-                0: `⇖` ag left  + li fore
-                1: `⇑` ag keep  + li fore
-                2: `⇗` ag right + li fore
-                3: `⇐` ag left  + li keep
-                4: `-` ag keep  + li keep
-                5: `⇒` ag right + li keep
-                6: `⇙` ag left  + li back
-                7: `⇓` ag keep  + li back
-                8: `⇘` ag right + li back
-            E.g. Action 1 is keep the angular velocity and accerlate foreward.
+            The action space is continous and consists of two states
+            Angular acceleration betwen -3m/s^2 and 3m/s^2
+            Acceleration betwen -1m/s^2 and 1m/s^2
         """
-        #if isinstance(action, int):
-        #    if action // 3 == 0:
-        #        self.speed += time_step * self.cfg.ACCELERATION_MAX
-        #    if action // 3 == 2:
-        #        self.speed += time_step * self.cfg.ACCELERATION_MIN
-
-        #    if action % 3 == 0:
-        #        self.angular_velocity += time_step * self.cfg.ANGULAR_ACCELERATION_MAX
-        #    if action % 3 == 2:
-        #        self.angular_velocity += time_step * self.cfg.ANGULAR_ACCELERATION_MIN
-
-        #else:
+        
         self.acceleration = action[0]
         self.angular_acceleration = 3*action[1]
 

@@ -148,6 +148,27 @@ def main_process(rl_index:int=1, decision_mode:int=1, to_plot=False, scene_optio
                 last_dyn_obstacle_list = dyn_obstacle_list
 
                 if decision_mode == 0:
+                    env_eval.set_agent_state(traj_gen.state[:2], traj_gen.state[2], 
+                                                traj_gen.last_action[0], traj_gen.last_action[1])
+                    obsv, reward, done, info = env_eval.step([0,0]) # just for plotting and updating status
+
+                    if dyn_obstacle_list:
+                        traj_gen.update_dynamic_constraints(dyn_obstacle_pred_list)
+                    original_ref_traj, _ = traj_gen.get_local_ref_traj()
+                    chosen_ref_traj = original_ref_traj
+                    timer_mpc = PieceTimer()
+                    try:
+                        mpc_output = traj_gen.get_action(chosen_ref_traj)
+                    except Exception as e:
+                        done = True
+                        print(f'MPC fails: {e}')
+                        break
+                    last_mpc_time = timer_mpc(4, ms=True)
+                    if mpc_output is None:
+                        break
+                    action, pred_states, cost = mpc_output
+
+                elif decision_mode == 1:
                     traj_gen.set_current_state(env_eval.agent.state)
                     original_ref_traj, _ = traj_gen.get_local_ref_traj() # just for output
 
@@ -162,7 +183,7 @@ def main_process(rl_index:int=1, decision_mode:int=1, to_plot=False, scene_optio
                     # done = env_eval.update_termination()
                     # info = env_eval.get_info()
 
-                elif decision_mode == 1:
+                elif decision_mode == 2:
                     traj_gen.set_current_state(env_eval.agent.state)
                     original_ref_traj, _ = traj_gen.get_local_ref_traj() # just for output
 
@@ -171,7 +192,7 @@ def main_process(rl_index:int=1, decision_mode:int=1, to_plot=False, scene_optio
                     last_rl_time = timer_rl(4, ms=True)
                     obsv, reward, done, info = env_eval.step(action_index)
 
-                elif decision_mode == 2:
+                elif decision_mode == 3:
                     env_eval.set_agent_state(traj_gen.state[:2], traj_gen.state[2], 
                                              traj_gen.last_action[0], traj_gen.last_action[1])
                     timer_rl = PieceTimer()
@@ -262,7 +283,7 @@ def main_evaluate(rl_index: int, decision_mode, metrics: Metrics, scene_option:T
 if __name__ == '__main__':
     """
     rl_index: 0: image, 1: ray
-    decision_mode: 0: ddpg, 1: mpc, 2: hybrid
+    decision_mode: 0: mpc, 1: ddpg, 2: td3, 3: hybrid-ddpg
 
     Map:
     SCENE 1:
@@ -295,33 +316,33 @@ if __name__ == '__main__':
 
     for i in range(num_trials):
         print(f"Trial {i+1}/{num_trials}")
-        #mpc_metrics = main_evaluate(rl_index=1, decision_mode=1, metrics=mpc_metrics, scene_option=scene_option)
-        #ddpg_lid_metrics = main_evaluate(rl_index=1, decision_mode=0, metrics=ddpg_lid_metrics, scene_option=scene_option)
-        #ddpg_img_metrics = main_evaluate(rl_index=0, decision_mode=0, metrics=ddpg_img_metrics, scene_option=scene_option)
-        td3_lid_metrics = main_evaluate(rl_index=1, decision_mode=1, metrics=td3_lid_metrics, scene_option=scene_option)
-        td3_img_metrics = main_evaluate(rl_index=0, decision_mode=1, metrics=td3_img_metrics, scene_option=scene_option)
-        hyb_lid_metrics = main_evaluate(rl_index=1, decision_mode=2, metrics=hyb_lid_metrics, scene_option=scene_option)
-        hyb_img_metrics = main_evaluate(rl_index=0, decision_mode=2, metrics=hyb_img_metrics, scene_option=scene_option)
+        mpc_metrics = main_evaluate(rl_index=1, decision_mode=0, metrics=mpc_metrics, scene_option=scene_option)
+        #ddpg_lid_metrics = main_evaluate(rl_index=1, decision_mode=1, metrics=ddpg_lid_metrics, scene_option=scene_option)
+        #ddpg_img_metrics = main_evaluate(rl_index=0, decision_mode=1, metrics=ddpg_img_metrics, scene_option=scene_option)
+        #td3_lid_metrics = main_evaluate(rl_index=1, decision_mode=2, metrics=td3_lid_metrics, scene_option=scene_option)
+        #td3_img_metrics = main_evaluate(rl_index=0, decision_mode=2, metrics=td3_img_metrics, scene_option=scene_option)
+        #hyb_lid_metrics = main_evaluate(rl_index=1, decision_mode=3, metrics=hyb_lid_metrics, scene_option=scene_option)
+        #hyb_img_metrics = main_evaluate(rl_index=0, decision_mode=3, metrics=hyb_img_metrics, scene_option=scene_option)
 
     round_digits = 2
     print(f"=== Scene {scene_option[0]}-{scene_option[1]}-{scene_option[2]} ===")
-    #print(mpc_metrics.get_average(round_digits))
+    print(mpc_metrics.get_average(round_digits))
     #print()
-    print('DDPG Lidar')
-    print(ddpg_lid_metrics.get_average(round_digits))
-    print()
+    #print('DDPG Lidar')
+    #print(ddpg_lid_metrics.get_average(round_digits))
+    #print()
     #print('DDPG Image')
     #print(ddpg_img_metrics.get_average(round_digits))
-    print()
-    print('td3 Lidar')
-    print(td3_lid_metrics.get_average(round_digits))
-    print()
+    #print()
+    #print('td3 Lidar')
+    #print(td3_lid_metrics.get_average(round_digits))
+    #print()
     #print('td3 Image')
     #print(td3_img_metrics.get_average(round_digits))
-    print()
-    print('DDPG hybrid Lidar')
-    print(hyb_lid_metrics.get_average(round_digits))
-    print()
+    #print()
+    #print('DDPG hybrid Lidar')
+    #print(hyb_lid_metrics.get_average(round_digits))
+    #print()
     #print('DDPG hybrid Image')
     #print(hyb_img_metrics.get_average(round_digits))
     print('='*50)
