@@ -90,3 +90,6 @@ ipython_config.py
 
 # pyenv
 .python-version
+
+#plot images
+*.png

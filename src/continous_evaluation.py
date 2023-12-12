@@ -369,7 +369,7 @@ if __name__ == '__main__':
 
     for i in range(num_trials):
         print(f"Trial {i+1}/{num_trials}")
-        mpc_metrics = main_evaluate(rl_index=1, decision_mode=0, metrics=mpc_metrics, scene_option=scene_option)
+        #mpc_metrics = main_evaluate(rl_index=1, decision_mode=0, metrics=mpc_metrics, scene_option=scene_option)
         ddpg_lid_metrics = main_evaluate(rl_index=1, decision_mode=1, metrics=ddpg_lid_metrics, scene_option=scene_option)
         #ddpg_img_metrics = main_evaluate(rl_index=0, decision_mode=1, metrics=ddpg_img_metrics, scene_option=scene_option)
         td3_lid_metrics = main_evaluate(rl_index=1, decision_mode=2, metrics=td3_lid_metrics, scene_option=scene_option)
@@ -381,9 +381,9 @@ if __name__ == '__main__':
 
     round_digits = 2
     print(f"=== Scene {scene_option[0]}-{scene_option[1]}-{scene_option[2]} ===")
-    print('MPC')
-    print(mpc_metrics.get_average(round_digits))
-    print()
+    #print('MPC')
+    #print(mpc_metrics.get_average(round_digits))
+    #print()
     print('DDPG Lidar')
     print(ddpg_lid_metrics.get_average(round_digits))
     print()
