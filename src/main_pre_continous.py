@@ -67,11 +67,20 @@ class Metrics:
         Args:
             mode: dqn, mpc, or hyb
         """
-        if mode not in ['dqn', 'mpc', 'hyb']:
-            raise ValueError(f"Mode {mode} not recognized (should be 'dqn', 'mpc', or 'hyb').")
+        if mode not in ['MPC', 'DDPG-L', 'DDPG-V', 'TD3-L', 'TD3-V','HYB-DDPG-L', 'HYB-DDPG-V', 'HYB-TD3-L', 'HYB-TD3-V']:
+            raise ValueError(f"Mode {mode} not recognized (should be 'MPC', 'DDPG-L', 'DDPG-V', 'TD3-L', 'TD3-V','HYB-DDPG-L', 'HYB-DDPG-V', 'HYB-TD3-L', 'HYB-TD3-V').")
         self.mode = mode
         self.trial_list = []
         self.success_rate = 0
+
+    def write_latex(self,round_digit:int=4):
+        print_data = self.get_average(round_digit)
+
+        ct = print_data["computation_time"]
+        dd = print_data["deviation_distance"]
+        smooth = print_data["smoothness"]
+
+        return f"&  & {self.mode} & {ct[0]} & {ct[1]} & {ct[2]} & {dd[0]} & {dd[1]} & {smooth[0]} & {smooth[1]} & {print_data['clearance']} & {print_data['finish_time']} & {print_data['success_rate']} \\\\"
 
     def get_average(self, round_digit:int=4) -> dict:
         self.metric_average = {}

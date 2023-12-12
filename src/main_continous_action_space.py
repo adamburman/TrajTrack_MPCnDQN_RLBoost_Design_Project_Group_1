@@ -325,7 +325,7 @@ if __name__ == '__main__':
     scene_option = (1, 3, 1)
 
     #time_list_mpc     = main(rl_index=rl_index, decision_mode=0,  to_plot=False, scene_option=scene_option, save_num=1)
-    time_list_lid     = main(rl_index=rl_index, decision_mode=2,  to_plot=True, scene_option=scene_option, save_num=2)
+    time_list_lid     = main(rl_index=rl_index, decision_mode=1,  to_plot=True, scene_option=scene_option, save_num=2)
     #time_list_img     = main(rl_index=0,        decision_mode=2,  to_plot=False, scene_option=scene_option, save_num=3)
     #time_list_hyb_lid = main(rl_index=rl_index, decision_mode=4,  to_plot=True, scene_option=scene_option, save_num=4)
     #time_list_hyb_img = main(rl_index=0,        decision_mode=4,  to_plot=True, scene_option=scene_option, save_num=5)

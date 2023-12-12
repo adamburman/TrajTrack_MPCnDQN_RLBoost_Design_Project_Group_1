@@ -354,18 +354,18 @@ if __name__ == '__main__':
         - (1-right, 2-sharp, 3-u-shape)
     """
     rl_index = 1
-    num_trials = 5
-    scene_option = (1, 3, 1)
+    num_trials = 1
+    scene_option = (1, 2, 1)
 
-    mpc_metrics = Metrics(mode='mpc')
-    ddpg_lid_metrics = Metrics(mode='dqn')
-    ddpg_img_metrics = Metrics(mode='dqn')
-    td3_lid_metrics = Metrics(mode='dqn')
-    td3_img_metrics = Metrics(mode='dqn')
-    hyb_ddpg_lid_metrics = Metrics(mode='hyb')
-    hyb_ddpg_img_metrics = Metrics(mode='hyb')
-    hyb_td3_lid_metrics = Metrics(mode='hyb')
-    hyb_td3_img_metrics = Metrics(mode='hyb')
+    mpc_metrics = Metrics(mode='MPC')
+    ddpg_lid_metrics = Metrics(mode='DDPG-L')
+    ddpg_img_metrics = Metrics(mode='DDPG-V')
+    td3_lid_metrics = Metrics(mode='TD3-L')
+    td3_img_metrics = Metrics(mode='TD3-V')
+    hyb_ddpg_lid_metrics = Metrics(mode='HYB-DDPG-L')
+    hyb_ddpg_img_metrics = Metrics(mode='HYB-DDPG-V')
+    hyb_td3_lid_metrics = Metrics(mode='HYB-TD3-L')
+    hyb_td3_img_metrics = Metrics(mode='HYB-TD3-V')
 
     for i in range(num_trials):
         print(f"Trial {i+1}/{num_trials}")
@@ -409,4 +409,13 @@ if __name__ == '__main__':
     print('='*50)
 
 
-
+    ## Write to latex
+    #print(mpc_metrics.write_latex(4))
+    print(ddpg_lid_metrics.write_latex(4))
+    #print(ddpg_img_metrics.write_latex(4))
+    print(td3_lid_metrics.write_latex(4))
+    #print(td3_img_metrics.write_latex(4))
+    print(hyb_ddpg_lid_metrics.write_latex(4))
+    #print(hyb_ddpg_img_metrics.write_latex(4))
+    print(hyb_td3_lid_metrics.write_latex(4))
+    #print(hyb_td3_img_metrics.write_latex(4))
