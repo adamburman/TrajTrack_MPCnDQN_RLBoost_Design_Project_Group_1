@@ -8,6 +8,6 @@ class CollisionReward(Component):
     def __init__(self, factor: float):
         self.factor = factor
     
-    def step(self) -> float:
+    def step(self, action: int) -> float:
         reward = -self.factor if self.env.collided else 0
         return reward

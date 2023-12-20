@@ -33,10 +33,10 @@ class ReferencePathCornerObservation(Component):
             i = min(len(self.env.path.coords) - 1, i)
 
             point = np.asarray(self.env.path.coords[i])
-            delta = point - self.env.atr.position
+            delta = point - self.env.agent.position
 
             absulute_point_angle = atan2(delta[1], delta[0])
-            relative_point_angle = absulute_point_angle - self.env.atr.angle
+            relative_point_angle = absulute_point_angle - self.env.agent.angle
 
             obs[3 * j + 0] = cos(relative_point_angle)
             obs[3 * j + 1] = sin(relative_point_angle)

@@ -291,7 +291,7 @@ if __name__ == '__main__':
         - (1-right, 2-sharp, 3-u-shape)
     """
     rl_index = 1
-    num_trials = 50
+    num_trials = 5
     scene_option = (1, 3, 2)
 
     mpc_metrics = Metrics(mode='mpc')

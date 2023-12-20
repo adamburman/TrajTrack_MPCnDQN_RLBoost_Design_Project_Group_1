@@ -8,5 +8,5 @@ class AccelerationReward(Component):
     def __init__(self, factor: float):
         self.factor = factor
     
-    def step(self) -> float:
-        return -self.factor*self.env.atr.acceleration**2
+    def step(self, action: int) -> float:
+        return -self.factor*self.env.agent.acceleration**2

@@ -257,7 +257,7 @@ class TrajectoryPlannerEnvironment(gym.Env):
         plot.line(self.axes[0], self.traversed_positions, "b") #, label="Past path")
 
         if dqn_ref is not None:
-            self.axes[0].plot(np.array(dqn_ref)[:, 0], np.array(dqn_ref)[:, 1], "mo-", markerfacecolor='none', label="DQN reference")
+            self.axes[0].plot(np.array(dqn_ref)[:, 0], np.array(dqn_ref)[:, 1], "mo-", markerfacecolor='none', label="DRL reference")
         if original_ref is not None:
             self.axes[0].plot(np.array(original_ref)[:, 0], np.array(original_ref)[:, 1], "ro-", label="Original reference")
         if actual_ref is not None:

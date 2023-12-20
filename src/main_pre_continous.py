@@ -80,7 +80,7 @@ class Metrics:
         dd = print_data["deviation_distance"]
         smooth = print_data["smoothness"]
 
-        return f"&  & {self.mode} & {ct[0]} & {ct[1]} & {ct[2]} & {dd[0]} & {dd[1]} & {smooth[0]} & {smooth[1]} & {print_data['clearance']} & {print_data['finish_time']} & {print_data['success_rate']} \\\\"
+        return f"&  & {self.mode} & {ct[0]} & {ct[1]} & {ct[2]} & {dd[0]} & {dd[1]} & {smooth[0]} & {smooth[1]} & {print_data['clearance']} & {int(print_data['finish_time'])} & {int(print_data['success_rate']*100)} \\\\"
 
     def get_average(self, round_digit:int=4) -> dict:
         self.metric_average = {}

@@ -10,6 +10,6 @@ class ExcessiveSpeedReward(Component):
         self.factor = factor
         self.reference_speed = reference_speed
     
-    def step(self) -> float:
-        error = sign(self.reference_speed) * (self.env.atr.speed - self.reference_speed)
+    def step(self, action: int) -> float:
+        error = sign(self.reference_speed) * (self.env.agent.speed - self.reference_speed)
         return -self.env.time_step * self.factor * max(0, error)

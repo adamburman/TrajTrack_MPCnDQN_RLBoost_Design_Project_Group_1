@@ -1,6 +1,6 @@
 import numpy.typing as npt
 from . import Component
-from .. import ATR
+from .. import MobileRobot
 from .utils import normalize
 
 
@@ -14,8 +14,8 @@ class AngularVelocityObservation(Component):
     def internal_obs(self) -> npt.ArrayLike:
         return [
             normalize(
-                self.env.atr.angular_velocity,
-                ATR.ANGULAR_ACCELERATION_MIN,
-                ATR.ANGULAR_ACCELERATION_MAX
+                self.env.agent.angular_velocity,
+                MobileRobot().cfg.ANGULAR_ACCELERATION_MIN,
+                MobileRobot().cfg.ANGULAR_ACCELERATION_MAX
             )
         ]

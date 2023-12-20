@@ -11,7 +11,7 @@ class PathProgressReward(Component):
     def reset(self) -> None:
         self.last_path_progress = 0
     
-    def step(self) -> float:
+    def step(self, action: int) -> float:
         reward = self.factor * (self.env.path_progress - self.last_path_progress)
         self.last_path_progress = self.env.path_progress
         return reward

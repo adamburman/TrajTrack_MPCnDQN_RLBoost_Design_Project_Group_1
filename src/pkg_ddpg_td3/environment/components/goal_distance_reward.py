@@ -11,11 +11,11 @@ class GoalDistanceReward(Component):
         self.factor = factor
 
     def reset(self) -> None:
-        self.distance_to_goal = norm(self.env.goal.position - self.env.atr.position)
+        self.distance_to_goal = norm(self.env.goal.position - self.env.agent.position)
 
-    def step(self) -> float:
+    def step(self, action: int) -> float:
         self.last_distance_to_goal = self.distance_to_goal
-        self.distance_to_goal = norm(self.env.goal.position - self.env.atr.position)
+        self.distance_to_goal = norm(self.env.goal.position - self.env.agent.position)
         if self.last_distance_to_goal is None:
             self.distance_to_goal = self.last_distance_to_goal
         

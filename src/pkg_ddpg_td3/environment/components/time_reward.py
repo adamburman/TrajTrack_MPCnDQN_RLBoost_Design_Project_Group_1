@@ -8,6 +8,6 @@ class TimeReward(Component):
     def __init__(self, factor: float):
         self.factor = factor
     
-    def step(self) -> float:
+    def step(self, action: int) -> float:
         reward = -self.factor * self.env.time_step
         return reward

@@ -8,7 +8,7 @@ class CrossTrackReward(Component):
     def __init__(self, factor: float):
         self.factor = factor
     
-    def step(self) -> float:
+    def step(self, action: int) -> float:
         closest_point = self.env.path.interpolate(self.env.path_progress)
-        cte = self.env.atr.point.distance(closest_point)
+        cte = self.env.agent.point.distance(closest_point)
         return -self.env.time_step * self.factor * cte**2

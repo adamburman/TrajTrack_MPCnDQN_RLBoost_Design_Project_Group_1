@@ -29,10 +29,10 @@ class ReferencePathSampleObservation(Component):
         obs = np.zeros((3 * self.num_samples,), dtype=np.float32)
         for i in range(self.num_samples):
             point = self.env.path.interpolate(self.env.path_progress + i * self.spacing + self.offset)
-            delta = np.asarray(point.coords[0]) - self.env.atr.position
+            delta = np.asarray(point.coords[0]) - self.env.agent.position
             
             absulute_point_angle = atan2(delta[1], delta[0])
-            relative_point_angle = absulute_point_angle - self.env.atr.angle
+            relative_point_angle = absulute_point_angle - self.env.agent.angle
 
             obs[3 * i + 0] = cos(relative_point_angle)
             obs[3 * i + 1] = sin(relative_point_angle)

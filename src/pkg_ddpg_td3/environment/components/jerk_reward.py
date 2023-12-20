@@ -11,7 +11,7 @@ class JerkReward(Component):
     def reset(self) -> None:
         self.last_acceleration = 0
     
-    def step(self) -> float:
-        reward = -self.factor*(self.env.atr.acceleration - self.last_acceleration)**2
-        self.last_acceleration = self.env.atr.acceleration
+    def step(self, action: int) -> float:
+        reward = -self.factor*(self.env.agent.acceleration - self.last_acceleration)**2
+        self.last_acceleration = self.env.agent.acceleration
         return reward

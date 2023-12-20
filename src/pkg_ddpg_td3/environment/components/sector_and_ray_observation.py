@@ -43,26 +43,26 @@ class SectorAndRayObservation(Component):
 
         segment_width = 2 * pi / self.num_segments
         for i in range(self.num_segments):
-            angle = self.env.atr.angle + i * segment_width
+            angle = self.env.agent.angle + i * segment_width
 
             angle1 = angle - segment_width / 2
             angle2 = angle + segment_width / 2
 
-            ray = LineString(self.env.atr.position + [(0, 0), (L * cos(angle), L * sin(angle))])
+            ray = LineString(self.env.agent.position + [(0, 0), (L * cos(angle), L * sin(angle))])
 
             points = [(0, 0), (L * cos(angle1), L * sin(angle1)), (L * cos(angle2), L*sin(angle2))]
-            segment = Polygon(self.env.atr.position + points)
+            segment = Polygon(self.env.agent.position + points)
 
             closest_in_segment = float("inf")
             closest_on_ray = float("inf")
             for geometry in geometries:
                 intersecion = segment.intersection(geometry)
                 if not intersecion.is_empty:
-                    closest_in_segment = min(closest_in_segment, intersecion.distance(self.env.atr.point))
+                    closest_in_segment = min(closest_in_segment, intersecion.distance(self.env.agent.point))
                     
                     intersecion = intersecion.intersection(ray)
                     if not intersecion.is_empty:
-                        closest_on_ray = min(closest_on_ray, intersecion.distance(self.env.atr.point))
+                        closest_on_ray = min(closest_on_ray, intersecion.distance(self.env.agent.point))
             
             self.segments[i] = closest_in_segment
             self.rays[i] = closest_on_ray
@@ -81,5 +81,5 @@ class SectorAndRayObservation(Component):
         return obs
 
     def render(self, ax: Axes) -> None:
-        plot.sectors(ax, self.segments, atr=self.env.atr)
-        plot.rays(ax, self.rays, atr=self.env.atr)
+        plot.sectors(ax, self.segments, robot=self.env.agent)
+        plot.rays(ax, self.rays, robot=self.env.agent)

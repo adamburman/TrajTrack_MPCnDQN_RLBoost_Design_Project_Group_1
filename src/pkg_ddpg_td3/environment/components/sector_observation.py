@@ -32,16 +32,16 @@ class SectorObservation(Component):
 
         segment_width = 2 * pi / self.num_segments
         for i in range(self.num_segments):
-            angle1 = self.env.atr.angle + (i - 1 / 2) * segment_width
+            angle1 = self.env.agent.angle + (i - 1 / 2) * segment_width
             angle2 = angle1 + segment_width
             points = [(0, 0), (L * cos(angle1), L * sin(angle1)), (L * cos(angle2), L*sin(angle2))]
-            segment = Polygon(self.env.atr.position + points)
+            segment = Polygon(self.env.agent.position + points)
 
             closest_distance = float("inf")
             for geometry in geometries:
                 intersecion = segment.intersection(geometry)
                 if not intersecion.is_empty:
-                    distance = intersecion.distance(self.env.atr.point)
+                    distance = intersecion.distance(self.env.agent.point)
                     if distance < closest_distance:
                         closest_distance = distance
             
@@ -51,5 +51,5 @@ class SectorObservation(Component):
         return obs
 
     def render(self, ax: Axes) -> None:
-        plot.sectors(ax, self.distances, atr=self.env.atr)
+        plot.sectors(ax, self.distances, agent=self.env.agent)
     

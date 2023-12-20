@@ -9,5 +9,5 @@ class SpeedReward(Component):
         self.factor = factor
         self.reference_speed = reference_speed
     
-    def step(self) -> float:
-        return -self.env.time_step * self.factor * (self.env.atr.speed - self.reference_speed)**2
+    def step(self, action: int) -> float:
+        return -self.env.time_step * self.factor * (self.env.agent.speed - self.reference_speed)**2

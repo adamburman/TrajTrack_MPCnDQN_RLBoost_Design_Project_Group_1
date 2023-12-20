@@ -55,10 +55,10 @@ class ImageObservation(Component):
         self.obstacles = []
 
     def external_obs(self) -> npt.ArrayLike:
-        c = cos(self.env.atr.angle - self.angle)
-        s = sin(self.env.atr.angle - self.angle)
+        c = cos(self.env.agent.angle - self.angle)
+        s = sin(self.env.agent.angle - self.angle)
         R = np.array([[s, -c], [c, s]])
-        transform = lambda x: self.original_size * (self.scale * (R @ (x - self.env.atr.position).T).T + self.center)
+        transform = lambda x: self.original_size * (self.scale * (R @ (x - self.env.agent.position).T).T + self.center)
 
         img0 = np.zeros((self.original_size[1], self.original_size[0]), dtype=np.uint8)
         cv2.fillPoly(img0, [np.int32(transform(self.env.boundary.get_padded_vertices()))], 255)

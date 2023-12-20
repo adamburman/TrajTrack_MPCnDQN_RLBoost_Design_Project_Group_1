@@ -12,5 +12,5 @@ class GoalDistanceObservation(Component):
     internal_obs_max: npt.ArrayLike = [1]
 
     def internal_obs(self) -> npt.ArrayLike:
-        distance = norm(self.env.goal.position - self.env.atr.position)
+        distance = norm(self.env.goal.position - self.env.agent.position)
         return [normalize_distance(distance)]

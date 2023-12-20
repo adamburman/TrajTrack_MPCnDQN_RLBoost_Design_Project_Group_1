@@ -8,6 +8,6 @@ class ReachGoalReward(Component):
     def __init__(self, factor: float):
         self.factor = factor
     
-    def step(self) -> float:
+    def step(self, action: int) -> float:
         reward = self.factor if self.env.reached_goal else 0
         return reward

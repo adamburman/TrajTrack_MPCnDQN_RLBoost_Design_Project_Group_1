@@ -193,9 +193,9 @@ class Obstacle:
         """
         return self.keyframe.position + (self.keyframe.get_rotation_matrix() @ self.padded_nodes.T).T
 
-    def collides(self, atr: ATR) -> bool:
-        """Whether ``atr`` collides with this obstacle"""
-        return self.padded_polygon.contains(atr.point)
+    def collides(self, agent: ATR) -> bool:
+        """Whether ``agent`` collides with this obstacle"""
+        return self.padded_polygon.contains(agent.point)
 
     @staticmethod
     def create_mpc_static(nodes: npt.ArrayLike) -> 'Obstacle':
@@ -287,6 +287,6 @@ class Boundary:
         """
         return _exterior_nodes(self.padded_polygon, -1)
     
-    def collides(self, atr: ATR) -> bool:
-        """Whether ``atr`` collides with this boundary"""
-        return not self.padded_polygon.contains(atr.point)
+    def collides(self, agent: ATR) -> bool:
+        """Whether ``agent`` collides with this boundary"""
+        return not self.padded_polygon.contains(agent.point)

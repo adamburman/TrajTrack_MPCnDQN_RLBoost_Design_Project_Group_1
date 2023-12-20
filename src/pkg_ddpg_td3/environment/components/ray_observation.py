@@ -32,14 +32,14 @@ class RayObservation(Component):
 
         segment_width = 2 * pi / self.num_rays
         for i in range(self.num_rays):
-            angle = self.env.atr.angle + i * segment_width
-            ray = LineString(self.env.atr.position + [(0, 0), (L * cos(angle), L * sin(angle))])
+            angle = self.env.agent.angle + i * segment_width
+            ray = LineString(self.env.agent.position + [(0, 0), (L * cos(angle), L * sin(angle))])
 
             closest_distance = float("inf")
             for geometry in geometries:
                 intersecion = ray.intersection(geometry)
                 if not intersecion.is_empty:
-                    distance = intersecion.distance(self.env.atr.point)
+                    distance = intersecion.distance(self.env.agent.point)
                     if distance < closest_distance:
                         closest_distance = distance
             
@@ -49,4 +49,4 @@ class RayObservation(Component):
         return obs
 
     def render(self, ax: Axes) -> None:
-        plot.rays(ax, self.distances, atr=self.env.atr)
+        plot.rays(ax, self.distances, agent=self.env)
