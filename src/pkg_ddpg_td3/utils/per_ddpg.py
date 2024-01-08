@@ -1,8 +1,8 @@
 """
 This file hacks Prioritized Experience Replay (PER) into stable_baselines3 by
-extending the `DQN`` class. Lots of this file is copy-paste from the
-stable_baselines3 `DQN`` class, in particular the ``train`` method of the class
-``PerDQN`` is mostly copy-paste with minor changes.
+extending the `DDPG`` class. Lots of this file is copy-paste from the
+stable_baselines3 `DDPG`` class, in particular the ``train`` method of the class
+``PerDDPG`` is mostly copy-paste with minor changes.
 """
 
 from typing import Any, List, Dict, Optional, Tuple, Type, Union

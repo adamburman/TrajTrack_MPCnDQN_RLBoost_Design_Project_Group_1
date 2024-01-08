@@ -10,6 +10,7 @@ import random
 import numpy as np
 import shapely.ops
 from shapely.geometry import LineString, Polygon, JOIN_STYLE, Point
+from math import pi, radians, cos, sin
 
 from ..environment import MobileRobot, Obstacle, Boundary, Goal, MapDescription, MapGenerator
 
@@ -437,6 +438,197 @@ def generate_map_scene_2(sub_index: int, scene_option: int) -> MapDescription:
     scene_2_obstacles.extend(more_obstacles)
 
     return scene_2_robot, scene_2_boundary, scene_2_obstacles, scene_2_goal
+
+
+def generate_map_eval() -> MapDescription:
+    """
+    Generates a map with a narrow corridor and dynamic obstacles, 
+    used for evaluating which model is best.
+    """
+
+    max_angle = math.pi / 2
+
+    wall_padding = 5
+    corridor_padding = random.uniform(0.7, 1.5)
+
+    coords = np.asarray([(0, 0), (wall_padding, 0)])
+    angle = 0
+
+    dangle = np.array([-44.2292,56.5713,-46.1655,77.2675,-27.0029])*pi/180
+    length = [7.7585,4.0423,5.5116,3.3429,6.5076]
+
+    for i in range(5):
+        lo = -max_angle - angle
+        hi = max_angle - angle
+        dangle[i] = dangle[i]**2 / (hi if dangle[i] > 0 else lo)
+        angle += dangle[i]
+        coords = np.vstack((coords, coords[i + 1, :] + length[i]*np.asarray((cos(angle), sin(angle)))))
+    coords = np.vstack((coords, coords[-1, :] + (wall_padding, 0)))
+    
+    corridor = LineString(coords)
+    
+    minx, miny, maxx, maxy = corridor.bounds
+
+    wall_padding = 5
+    pminx = minx - wall_padding
+    pminy = miny - wall_padding-5
+    pmaxx = maxx + wall_padding
+    pmaxy = maxy + wall_padding
+
+    boundary = Boundary([(pminx-20, pminy), (pmaxx+20, pminy), (20+pmaxx, pmaxy), (pminx-20, pmaxy)])
+
+    init_state = np.array([pminx-15, 3, -pi, 0, 0])
+    robot = MobileRobot(init_state)
+    goal = Goal((18.5+pmaxx, -10))
+
+    pminx = minx + wall_padding
+    pmaxx = maxx - wall_padding
+
+    obstacles = []
+
+    obstacles.append(Obstacle.create_mpc_static([(-14, -5), (-8, -5), (-8, 7), (-14, 7)]))
+    obstacles.append(Obstacle.create_mpc_dynamic((1, -7), (-4, 1), 0.5, 2, 1, 0, random = False))
+    obstacles.append(Obstacle.create_mpc_dynamic((-18, -4), (-15, 0), 0.5, 0.7, 0.7, pi/2, random = False))
+    obstacles.append(Obstacle.create_mpc_dynamic((-10, -10), (-10, -7), 0.8, 0.7, 1, pi/4, random = False))
+    obstacles.append(Obstacle.create_mpc_dynamic((30,2), (40,5), 0.3, 1, 1, pi/2, random = False))
+    obstacles.append(Obstacle.create_non_convex_u_shape((54.25,-2.5), (54.25,-2.5), 0.3, 1, 1, pi/5))
+    obstacles.append(Obstacle.create_mpc_static([(42, -14), (50, -14), (50, 5), (42, 5)]))
+
+    if pminx < pmaxx:
+        box = Polygon([(pminx, pminy), (pmaxx, pminy), (pmaxx, pmaxy), (pminx, pmaxy)])
+        left = corridor.parallel_offset(corridor_padding, 'left', join_style=JOIN_STYLE.mitre, mitre_limit=1)
+        right = corridor.parallel_offset(corridor_padding, 'right', join_style=JOIN_STYLE.mitre, mitre_limit=1)
+
+        eps = 1e-3
+
+        split = shapely.ops.split(box, right)
+        test = Point((pminx + eps, pminy + eps))
+        for geom in split.geoms:
+            if geom.contains(test):
+                obstacles.append(Obstacle.create_mpc_static(geom.exterior.coords[:-1]))
+                break
+        
+        split = shapely.ops.split(box, left)
+        test = Point((pminx + eps, pmaxy - eps))
+        for geom in split.geoms:
+            if geom.contains(test):
+                obstacles.append(Obstacle.create_mpc_static(geom.exterior.coords[:-1]))
+                break
+    
+    return robot, boundary, obstacles, goal
+
+def generate_map_eval_rand() -> MapDescription:
+    """
+    Generates a map with a randomized narrow corridor and dynamic obstacles.
+    Not currently used in the implementation, but can be extended to better evaluate
+    which model is best.
+    """
+
+    max_angle = pi / 2
+
+    wall_padding = 5
+    corridor_padding = random.uniform(0.7, 1.5)
+
+    coords = np.asarray([(0, 0), (wall_padding, 0)])
+    angle = 0
+    for i in range(5):
+        lo = -max_angle - angle
+        hi = max_angle - angle
+        dangle = random.uniform(lo, hi)
+        dangle = dangle**2 / (hi if dangle > 0 else lo)
+        angle += dangle
+
+        length = random.uniform(2, 8)
+        coords = np.vstack((coords, coords[i + 1, :] + length * np.asarray((cos(angle), sin(angle)))))
+    coords = np.vstack((coords, coords[-1, :] + (wall_padding, 0)))
+
+    corridor = LineString(coords)
+    minx, miny, maxx, maxy = corridor.bounds
+
+    wall_padding = 5
+    pminx = minx - wall_padding
+    pminy = miny - wall_padding
+    pmaxx = maxx + wall_padding
+    pmaxy = maxy + wall_padding
+
+    boundary = Boundary([(pminx-15, pminy), (pmaxx+15, pminy), (15+pmaxx, pmaxy), (pminx-15, pmaxy)])
+
+    init_state = np.array([pminx-10, random.uniform(pminy+5, pmaxy-5), random.uniform(0, 2 * pi), 0, 0])
+    robot = MobileRobot(init_state)
+    goal = Goal((10+pmaxx, random.uniform(pminy+5, pmaxy-5)))
+
+    pminx = minx + wall_padding
+    pmaxx = maxx - wall_padding
+
+    obstacles = []
+
+    for i in range(5):
+        x = random.uniform(pminx-15, pminx-5)
+        y = random.uniform(pminy+wall_padding, pmaxy-wall_padding)
+
+        if i < 2:
+            w = random.uniform(2,4)
+            h = random.uniform(2,4)
+            x0 = x - w/2
+            y0 = y - h/2
+
+            obstacles.append(Obstacle.create_mpc_static([(x0, y0), (x0 + w, y0), (x0 + w, y0 + h), (x0, y0 + h)]))
+        else:
+            x2 = x + random.uniform(-5, 5)
+            y2 = y + random.uniform(-5, 5)
+            rx = random.uniform(0.2, 1.2)
+            ry = random.uniform(0.2, 1.2)
+            freq = random.uniform(0.3, 0.7)
+            angle = random.uniform(0, 2 * pi)
+
+            obstacles.append(Obstacle.create_mpc_dynamic((x, y), (x2, y2), freq, rx, ry, angle))
+
+
+    for i in range(5):
+        x = random.uniform(pmaxx+5, pmaxx+15)
+        y = random.uniform(pminy+wall_padding, pmaxy-wall_padding)
+
+        if i < 2:
+            w = random.uniform(2,4)
+            h = random.uniform(2,4)
+            x0 = x - w/2
+            y0 = y - h/2
+
+            obstacles.append(Obstacle.create_mpc_static([(x0, y0), (x0 + w, y0), (x0 + w, y0 + h), (x0, y0 + h)]))
+        else:
+            x2 = x + random.uniform(-5, 5)
+            y2 = y + random.uniform(-5, 5)
+            rx = random.uniform(0.2, 1.2)
+            ry = random.uniform(0.2, 1.2)
+            freq = random.uniform(0.3, 0.7)
+            angle = random.uniform(0, 2 * pi)
+
+            obstacles.append(Obstacle.create_mpc_dynamic((x, y), (x2, y2), freq, rx, ry, angle))
+
+
+    if pminx < pmaxx:
+        box = Polygon([(pminx, pminy), (pmaxx, pminy), (pmaxx, pmaxy), (pminx, pmaxy)])
+        left = corridor.parallel_offset(corridor_padding, 'left', join_style=JOIN_STYLE.mitre, mitre_limit=1)
+        right = corridor.parallel_offset(corridor_padding, 'right', join_style=JOIN_STYLE.mitre, mitre_limit=1)
+
+        eps = 1e-3
+
+        split = shapely.ops.split(box, right)
+        test = Point((pminx + eps, pminy + eps))
+        for geom in split.geoms:
+            if geom.contains(test):
+                obstacles.append(Obstacle.create_mpc_static(geom.exterior.coords[:-1]))
+                break
+        
+        split = shapely.ops.split(box, left)
+        test = Point((pminx + eps, pmaxy - eps))
+        for geom in split.geoms:
+            if geom.contains(test):
+                obstacles.append(Obstacle.create_mpc_static(geom.exterior.coords[:-1]))
+                break
+
+    return robot, boundary, obstacles, goal
+
 
 
 

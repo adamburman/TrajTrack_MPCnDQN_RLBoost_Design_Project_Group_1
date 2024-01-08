@@ -1,6 +1,7 @@
 from time import time
 from packaging import version
 
+
 import gym
 from gym import spaces
 
@@ -30,16 +31,9 @@ class TrajectoryPlannerEnvironment(gym.Env):
 
     The observation space depends on the specific implementation, however the
     action space is always the same, see the accompanying report for details.
-    The possible actions refer to angular and linear acceleration and are:
-    0: accelerate left and accelerate forward
-    1: keep anglular velocity and accelerate forward
-    2: accelerate right and accelerate forward
-    3: accelerate left and keep speed
-    4: keep anglular velocity  and keep speed
-    5: accelerate right and keep speed
-    6: accelerate left and accelerate backward
-    7: keep anglular velocity and accelerate backward
-    8: accelerate right and accelerate backward
+    The possible actions:
+    linear acceleration: [-1,1] m/s^2
+    angular acceleration: [-3,3] rad/s^2
     """
 
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 10}
@@ -106,6 +100,8 @@ class TrajectoryPlannerEnvironment(gym.Env):
             self.traversed_positions = [self.agent.position.copy()]
             self.speeds = [self.agent.speed]
             self.angular_velocities = [self.agent.angular_velocity]
+            
+            
 
         self.collided_with_obstacle |= any(o.collides(self.agent) for o in self.obstacles)
         self.collided_with_boundary |= self.boundary.collides(self.agent)
@@ -266,13 +262,15 @@ class TrajectoryPlannerEnvironment(gym.Env):
         for component in self.components:
             component.render(self.axes[0])
 
-        self.axes[0].legend(ncol=2, loc="upper right", prop={'size': 18})
+        self.axes[0].legend(bbox_to_anchor=(0.5, 1.04), loc="lower center")
         self.axes[0].set_aspect('equal')
 
         times = np.arange(len(self.speeds))
         self.axes[1].plot(times, self.speeds, label="Speed [m/s]")
         self.axes[1].plot(times, self.angular_velocities, label="Angular velocity [rad/s]")
-        self.axes[1].legend(loc="lower right", prop={'size': 18})
+        self.axes[1].legend(bbox_to_anchor=(0.5, 1.04), loc="lower center")
+       
+        
 
         # dt = time() - self.last_render_at
         # self.last_render_at = time()

@@ -1,5 +1,5 @@
 from ..components import *
-from .. import MapGenerator, ATR
+from .. import MapGenerator, MobileRobot
 from ..environment import TrajectoryPlannerEnvironment
 
 
@@ -25,7 +25,7 @@ class TrajectoryPlannerEnvironmentImgsReward2(TrajectoryPlannerEnvironment):
         collision_reward_factor: float = 10,
         cross_track_reward_factor: float = 0.1,
         speed_reward_factor: float = 0.5,
-        reference_speed: float = ATR.SPEED_MAX * 0.8,
+        reference_speed: float = MobileRobot().cfg.SPEED_MAX * 0.8,
         jerk_factor: float = 0.02,
         angular_jerk_factor: float = 0.02,
     ):

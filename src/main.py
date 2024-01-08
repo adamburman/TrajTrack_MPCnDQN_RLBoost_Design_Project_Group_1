@@ -62,7 +62,7 @@ def load_rl_model_env(generate_map, index: int) -> Tuple[DQN, TrajectoryPlannerE
         model_folder_name = 'ray'
     else:
         raise ValueError('Invalid index')
-    model_path = os.path.join(pathlib.Path(__file__).resolve().parents[1], 'Model', model_folder_name, 'best_model')
+    model_path = os.path.join(pathlib.Path(__file__).resolve().parents[1], 'Model/dqn', model_folder_name, 'best_model')
     
     env_eval:TrajectoryPlannerEnvironment = gym.make(variant['env_name'], generate_map=generate_map)
     env_checker.check_env(env_eval)

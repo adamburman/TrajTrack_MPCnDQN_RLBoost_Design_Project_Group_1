@@ -21,8 +21,7 @@ from util.mpc_config import Configurator
 
 ### Helper
 from main_pre import generate_map, get_geometric_map, HintSwitcher, Metrics
-from pkg_ddpg_td3.utils.map import test_scene_1_dict, test_scene_2_dict
-#from pkg_dqn.utils.map import test_scene_1_dict, test_scene_2_dict
+from pkg_dqn.utils.map import test_scene_1_dict, test_scene_2_dict
 
 ### Others
 from timer import PieceTimer, LoopTimer
@@ -62,7 +61,7 @@ def load_rl_model_env(generate_map, index: int) -> Tuple[DQN, TrajectoryPlannerE
         model_folder_name = 'ray'
     else:
         raise ValueError('Invalid index')
-    model_path = os.path.join(pathlib.Path(__file__).resolve().parents[1], 'Model', model_folder_name, 'best_model')
+    model_path = os.path.join(pathlib.Path(__file__).resolve().parents[1], 'Model/dqn', model_folder_name, 'best_model')
     
     env_eval:TrajectoryPlannerEnvironment = gym.make(variant['env_name'], generate_map=generate_map)
     env_checker.check_env(env_eval)

@@ -29,6 +29,9 @@ class MobileRobot:
         
         self.cfg = MobileRobotSpecification()
 
+        self._acceleration = 0
+        self._angular_acceleration = 0
+
     @property
     def state(self) -> NDArray[np.float32]:
         return self._state
@@ -65,6 +68,20 @@ class MobileRobot:
     @angular_velocity.setter
     def angular_velocity(self, angular_velocity: float) -> None:
         self.state[4] = angular_velocity
+
+    @property
+    def acceleration(self) -> float:
+        return self._acceleration
+    @acceleration.setter
+    def acceleration(self, acceleration: float) -> None:
+        self._acceleration = acceleration
+    
+    @property
+    def angular_acceleration(self):
+        return self._angular_acceleration
+    @acceleration.setter
+    def angular_acceleration(self, angular_acceleration: float) -> None:
+        self._angular_acceleration = angular_acceleration
 
     @staticmethod
     def motion_model(sampling_time: float, state: NDArray, action: NDArray) -> NDArray:
@@ -113,11 +130,11 @@ class MobileRobot:
             Acceleration betwen -1m/s^2 and 1m/s^2
         """
         
-        self.acceleration = action[0]
-        self.angular_acceleration = 3*action[1]
+        self._acceleration = action[0]
+        self._angular_acceleration = 3*action[1]
 
-        self.speed += time_step*self.acceleration
-        self.angular_velocity += time_step*self.angular_acceleration
+        self.speed += time_step*self._acceleration
+        self.angular_velocity += time_step*self._angular_acceleration
 
         if self.speed > self.cfg.SPEED_MAX:
            self.speed = self.cfg.SPEED_MAX

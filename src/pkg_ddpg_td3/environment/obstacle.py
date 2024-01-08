@@ -209,15 +209,46 @@ class Obstacle:
         """Creates a static obstacle according to the MPC paper https://doi.org/10.1109/CASE49439.2021.9551644"""
         return Obstacle(nodes, True, Animation.static(), is_static=is_static)
 
+
     @staticmethod
-    def create_mpc_dynamic(p1: ArrayLike, p2: ArrayLike, freq: float, rx: float, ry: float, angle: float, corners: int = 12, is_static=False) -> 'Obstacle':
-        """Creates a dynamic obstacle according to the MPC paper https://doi.org/10.1109/CASE49439.2021.9551644"""
-        nodes = np.zeros((corners, 2))
-        for i in range(corners):
-            angle = 2 * pi * i / corners
-            nodes[i, :] = (rx * cos(angle), -ry * sin(angle))
-        offset = 0 # 0.5*pi/freq if freq > 0 else 0
-        return Obstacle(nodes, False, Animation.periodic(p1, p2, freq, angle, offset=offset), is_static=is_static)
+    def create_mpc_dynamic(p1: ArrayLike, p2: ArrayLike, freq: float, rx: float, 
+                           ry: float, angle: float, corners: int = 12, random: bool = True) -> 'Obstacle':
+        """Creates a dynamic obstacle according to the MPC paper https://doi.org/10.1109/CASE49439.2021.9551644
+        but added functionality of creating a non-convex object. variable 'random' declares if it should choose
+        between convex and non-convex with probability 0.5. If set to false: only convex."""
+        if random:
+            if np.random.choice([True, False]):
+                u_shape = np.array([[-1.4, -0.6], [-1.4, 0.6], [-0.6, 0.6],[-0.6, 0],[0.6, 0], [0.6, 0.6], [1.4, 0.6], [1.4, -0.6],[0.6, -0.6],[0.6, -0.8],[-0.6, -0.8],[-0.6, -0.6]])
+                l_shape = np.array([[-1, -0.4], [-1, 0.8], [-0.2, 0.8],[-0.2, 0.4],[1, 0.4], [1, -0.4]])
+                scaling_factor = 1
+                nodes = np.random.choice(np.array([u_shape, l_shape], dtype=object))*scaling_factor
+                offset = 0.5*pi/freq if freq > 0 else 0
+                return Obstacle(nodes, False, Animation.periodic(p1, p1, freq, angle, offset=offset))
+
+            else:
+                nodes = np.zeros((corners, 2))
+                for i in range(corners):
+                    angle = 2 * pi * i / corners
+                    nodes[i, :] = (rx * cos(angle), -ry * sin(angle))
+                offset = 0.5*pi/freq if freq > 0 else 0
+                return Obstacle(nodes, False, Animation.periodic(p1, p2, freq, angle, offset=offset))
+        else:
+            nodes = np.zeros((corners, 2))
+            for i in range(corners):
+                angle = 2 * pi * i / corners
+                nodes[i, :] = (rx * cos(angle), -ry * sin(angle))
+            offset = 0.5*pi/freq if freq > 0 else 0
+        return Obstacle(nodes, False, Animation.periodic(p1, p2, freq, angle, offset=offset))
+    
+    @staticmethod
+    def create_non_convex_u_shape(p1: ArrayLike, p2: ArrayLike, freq: float, rx: float, ry: float, angle: float) -> 'Obstacle':
+        """Creates a dynamic obstacle as a non-convex object."""
+        u_shape = np.array([[-1.4, -0.6], [-1.4, 0.6], [-0.6, 0.6],[-0.6, 0],[0.6, 0], [0.6, 0.6], [1.4, 0.6], [1.4, -0.6],[0.6, -0.6],[0.6, -0.8],[-0.6, -0.8],[-0.6, -0.6]])
+        scaling_factor = 1
+        nodes = u_shape*scaling_factor
+        offset = 0.5*pi/freq if freq > 0 else 0
+        return Obstacle(nodes, False, Animation.periodic(p1, p2, freq, angle, offset=offset))
+
 
 
 class Boundary:

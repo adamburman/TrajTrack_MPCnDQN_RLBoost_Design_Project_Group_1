@@ -26,8 +26,11 @@ class ReferencePathCornerObservation(Component):
         i = 0
 
         while length < self.env.path_progress:
-            length += norm(np.asarray(self.env.path.coords[i + 1]) - self.env.path.coords[i])
-            i += 1
+            try:
+                length += norm(np.asarray(self.env.path.coords[i + 1]) - self.env.path.coords[i])
+                i += 1
+            except IndexError:
+                break
 
         for j in range(self.num_samples):
             i = min(len(self.env.path.coords) - 1, i)

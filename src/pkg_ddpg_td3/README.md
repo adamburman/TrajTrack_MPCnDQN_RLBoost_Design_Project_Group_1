@@ -26,6 +26,3 @@ When instansiating any environment, it is neccesarry to pass the `generate_map` 
 This function will be called when the environment resets, and is used to generate the map that the agent is placed inside, including the initial position of the agent, goal, obstacle and boundary positions.
 Examples of such `generate_map`-functions are found in [`utils/map.py`](./utils/map.py).
 
-### Prioritized experience replay (PER)
-
-PER was hacked in at the last minute into stable-baselines3, the library used for deep reinforcement learning. Classes of Models supporting PER can be found in [`utils/per_dqn.py`](./utils/per_dqn.py).

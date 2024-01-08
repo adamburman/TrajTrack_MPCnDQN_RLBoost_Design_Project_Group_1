@@ -1,5 +1,5 @@
 """
-Used by per_dqn.py
+Used by per_ddpg.py and per_td3.py
 
 See https://github.com/cloudpipe/cloudpickle/issues/460
 """
